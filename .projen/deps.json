@@ -2,6 +2,7 @@
   "dependencies": [
     {
       "name": "@types/jest",
+      "version": "^27.0.0",
       "type": "build"
     },
     {
@@ -21,12 +22,16 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "2.1.0",
+      "version": "2.31.0",
       "type": "build"
     },
     {
       "name": "constructs",
       "version": "10.0.5",
+      "type": "build"
+    },
+    {
+      "name": "eslint-config-prettier",
       "type": "build"
     },
     {
@@ -42,17 +47,22 @@
       "type": "build"
     },
     {
+      "name": "eslint-plugin-prettier",
+      "type": "build"
+    },
+    {
       "name": "eslint",
       "version": "^8",
       "type": "build"
     },
     {
-      "name": "jest",
+      "name": "jest-junit",
+      "version": "^13",
       "type": "build"
     },
     {
-      "name": "jest-junit",
-      "version": "^13",
+      "name": "jest",
+      "version": "^27.0.0",
       "type": "build"
     },
     {
@@ -81,6 +91,10 @@
       "type": "build"
     },
     {
+      "name": "prettier",
+      "type": "build"
+    },
+    {
       "name": "projen",
       "type": "build"
     },
@@ -91,6 +105,7 @@
     },
     {
       "name": "ts-jest",
+      "version": "^27.0.0",
       "type": "build"
     },
     {
@@ -103,7 +118,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.1.0",
+      "version": "^2.31.0",
       "type": "peer"
     },
     {
