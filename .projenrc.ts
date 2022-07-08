@@ -1,10 +1,11 @@
-const { awscdk } = require('projen');
+import { awscdk } from 'projen';
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'WinterYukky',
   authorAddress: '49480575+WinterYukky@users.noreply.github.com',
   cdkVersion: '2.1.0',
   defaultReleaseBranch: 'main',
   name: 'nitro-aws-cdk-lib',
+  projenrcTs: true,
   repositoryUrl: 'https://github.com/WinterYukky/nitro-aws-cdk-lib.git',
 
   // deps: [],                /* Runtime dependencies of this module. */
