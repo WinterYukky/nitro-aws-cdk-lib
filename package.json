@@ -2,7 +2,7 @@
   "name": "nitro-aws-cdk-lib",
   "repository": {
     "type": "git",
-    "url": "https://github.com/WinterYukky/nitro-aws-cdk-lib.git"
+    "url": "https://github.com/49480575+WinterYukky/nitro-aws-cdk-lib.git"
   },
   "scripts": {
     "build": "npx projen build",
@@ -31,7 +31,7 @@
   },
   "author": {
     "name": "WinterYukky",
-    "email": "WinterYukky@gmail.com",
+    "email": "49480575+WinterYukky@users.noreply.github.com",
     "organization": false
   },
   "devDependencies": {

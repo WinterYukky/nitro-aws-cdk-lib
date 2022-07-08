@@ -1,7 +1,7 @@
 const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'WinterYukky',
-  authorAddress: 'WinterYukky@gmail.com',
+  authorAddress: '49480575+WinterYukky@users.noreply.github.com',
   cdkVersion: '2.1.0',
   defaultReleaseBranch: 'main',
   name: 'nitro-aws-cdk-lib',
