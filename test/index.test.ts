@@ -6,7 +6,9 @@ import { BucketDeployment } from "aws-cdk-lib/aws-s3-deployment";
 import { NitroAsset } from "../src";
 
 describe("Another directory", () => {
-  const app = new App();
+  const app = new App({
+    outdir: process.env.CI === "true" ? "./" : undefined,
+  });
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "AnotherDirectory", {
     path: "test/data/another-directory",
@@ -22,7 +24,9 @@ describe("Another directory", () => {
 });
 
 describe("Server only", () => {
-  const app = new App();
+  const app = new App({
+    outdir: process.env.CI === "true" ? "./" : undefined,
+  });
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "ServerOnly", {
     path: "test/data/server-only",
@@ -40,7 +44,9 @@ describe("Server only", () => {
 });
 
 describe("NitroStaticAsset.resolveCloudFrontBehaviors", () => {
-  const app = new App();
+  const app = new App({
+    outdir: process.env.CI === "true" ? "./" : undefined,
+  });
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "ResolveCloudFrontBehaviors", {
     path: "test/data/resolve-cloud-front-behaviors",
