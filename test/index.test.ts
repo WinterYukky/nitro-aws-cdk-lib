@@ -6,21 +6,41 @@ import { App, Stack } from "aws-cdk-lib";
 import { NitroAsset } from "../src";
 
 describe("Another directory", () => {
+  const app = new App({
+    outdir: process.env.CI === "true" ? "cdk.out/" : undefined,
+  });
+  const stack = new Stack(app, "TestStack");
+  const asset = new NitroAsset(stack, "AnotherDirectory", {
+    path: "test/data/another-directory",
+  });
+  it("Should detect server directory", () => {
+    const files = readdirSync(asset.serverHandler.path);
+    expect(files).toEqual(["index.mjs"]);
+  });
+  it("Should detect public directory", () => {
+    expect(asset.staticAsset.files).toEqual(["favicon.ico"]);
+    expect(asset.staticAsset.directories).toEqual(["_nuxt"]);
+  });
+});
+
+describe("Server only", () => {
   try {
     const app = new App({
       outdir: process.env.CI === "true" ? "cdk.out/" : undefined,
     });
     const stack = new Stack(app, "TestStack");
-    const asset = new NitroAsset(stack, "AnotherDirectory", {
-      path: "test/data/another-directory",
+    const asset = new NitroAsset(stack, "ServerOnly", {
+      path: "test/data/server-only",
     });
-    it("Should detect server directory", () => {
-      const files = readdirSync(asset.serverHandler.path);
-      expect(files).toEqual(["index.mjs"]);
+    it("files are should empty", () => {
+      expect(asset.staticAsset.files).toEqual([]);
     });
-    it("Should detect public directory", () => {
-      expect(asset.staticAsset.files).toEqual(["favicon.ico"]);
-      expect(asset.staticAsset.directories).toEqual(["_nuxt"]);
+    it("directories are should empty", () => {
+      expect(asset.staticAsset.directories).toEqual([]);
+    });
+    it("should create dotfile", () => {
+      const files = readdirSync(asset.staticAsset.path);
+      expect(files).toEqual(["dotfile"]);
     });
   } catch (error) {
     console.log("curent dir", process.cwd());
@@ -29,26 +49,6 @@ describe("Another directory", () => {
     throw error;
   }
 });
-
-// describe("Server only", () => {
-//   const app = new App({
-//     outdir: process.env.CI === "true" ? "cdk.out/" : undefined,
-//   });
-//   const stack = new Stack(app, "TestStack");
-//   const asset = new NitroAsset(stack, "ServerOnly", {
-//     path: "test/data/server-only",
-//   });
-//   it("files are should empty", () => {
-//     expect(asset.staticAsset.files).toEqual([]);
-//   });
-//   it("directories are should empty", () => {
-//     expect(asset.staticAsset.directories).toEqual([]);
-//   });
-//   it("should create dotfile", () => {
-//     const files = readdirSync(asset.staticAsset.path);
-//     expect(files).toEqual(["dotfile"]);
-//   });
-// });
 
 // describe("NitroStaticAsset.resolveCloudFrontBehaviors", () => {
 //   const app = new App({
