@@ -6,26 +6,33 @@ import { BucketDeployment } from "aws-cdk-lib/aws-s3-deployment";
 import { NitroAsset } from "../src";
 
 describe("Another directory", () => {
-  const app = new App({
-    outdir: process.env.CI === "true" ? "./" : undefined,
-  });
-  const stack = new Stack(app, "TestStack");
-  const asset = new NitroAsset(stack, "AnotherDirectory", {
-    path: "test/data/another-directory",
-  });
-  it("Should detect server directory", () => {
-    const files = readdirSync(asset.serverHandler.path);
-    expect(files).toEqual(["index.mjs"]);
-  });
-  it("Should detect public directory", () => {
-    expect(asset.staticAsset.files).toEqual(["favicon.ico"]);
-    expect(asset.staticAsset.directories).toEqual(["_nuxt"]);
-  });
+  try {
+    const app = new App({
+      outdir: process.env.CI === "true" ? "cdk.out/" : undefined,
+    });
+    const stack = new Stack(app, "TestStack");
+    const asset = new NitroAsset(stack, "AnotherDirectory", {
+      path: "test/data/another-directory",
+    });
+    it("Should detect server directory", () => {
+      const files = readdirSync(asset.serverHandler.path);
+      expect(files).toEqual(["index.mjs"]);
+    });
+    it("Should detect public directory", () => {
+      expect(asset.staticAsset.files).toEqual(["favicon.ico"]);
+      expect(asset.staticAsset.directories).toEqual(["_nuxt"]);
+    });
+  } catch (error) {
+    console.log("curent dir", process.cwd());
+    console.log("ls", readdirSync("./"));
+    console.log("ls cdk.out", readdirSync("./cdk.out"));
+    throw error;
+  }
 });
 
 describe("Server only", () => {
   const app = new App({
-    outdir: process.env.CI === "true" ? "./" : undefined,
+    outdir: process.env.CI === "true" ? "cdk.out/" : undefined,
   });
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "ServerOnly", {
@@ -45,7 +52,7 @@ describe("Server only", () => {
 
 describe("NitroStaticAsset.resolveCloudFrontBehaviors", () => {
   const app = new App({
-    outdir: process.env.CI === "true" ? "./" : undefined,
+    outdir: process.env.CI === "true" ? "cdk.out/" : undefined,
   });
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "ResolveCloudFrontBehaviors", {
