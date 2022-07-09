@@ -1,4 +1,4 @@
-import { readdirSync } from "fs";
+import { readdirSync, rmdirSync, mkdirSync } from "fs";
 import { App, Stack } from "aws-cdk-lib";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { Bucket } from "aws-cdk-lib/aws-s3";
@@ -6,9 +6,7 @@ import { BucketDeployment } from "aws-cdk-lib/aws-s3-deployment";
 import { NitroAsset } from "../src";
 
 describe("Another directory", () => {
-  const app = new App({
-    outdir: process.env.CI === "true" ? "./" : undefined,
-  });
+  const app = new App();
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "AnotherDirectory", {
     path: "test/data/another-directory",
@@ -24,9 +22,13 @@ describe("Another directory", () => {
 });
 
 describe("Server only", () => {
-  const app = new App({
-    outdir: process.env.CI === "true" ? "./" : undefined,
-  });
+  try {
+    rmdirSync("test/data/server-only/.output/public");
+  } catch {
+  } finally {
+    mkdirSync("test/data/server-only/.output/public");
+  }
+  const app = new App();
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "ServerOnly", {
     path: "test/data/server-only",
@@ -44,9 +46,7 @@ describe("Server only", () => {
 });
 
 describe("NitroStaticAsset.resolveCloudFrontBehaviors", () => {
-  const app = new App({
-    outdir: process.env.CI === "true" ? "./" : undefined,
-  });
+  const app = new App();
   const stack = new Stack(app, "TestStack");
   const asset = new NitroAsset(stack, "ResolveCloudFrontBehaviors", {
     path: "test/data/resolve-cloud-front-behaviors",
