@@ -24,6 +24,7 @@ describe("Another directory", () => {
 describe("Server only", () => {
   try {
     rmdirSync("test/data/server-only/.output/public");
+  } catch {
   } finally {
     mkdirSync("test/data/server-only/.output/public");
   }
