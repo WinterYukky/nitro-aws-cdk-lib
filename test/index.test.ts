@@ -1,5 +1,6 @@
-import { readdirSync, mkdirSync, rmSync } from "fs";
-import { App, Stack } from "aws-cdk-lib";
+import { readdirSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { join } from "path";
+import { App, DockerImage, Stack } from "aws-cdk-lib";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { BucketDeployment } from "aws-cdk-lib/aws-s3-deployment";
@@ -19,6 +20,68 @@ describe("Another directory", () => {
     expect(asset.staticAsset.files).toEqual(["favicon.ico"]);
     expect(asset.staticAsset.directories).toEqual(["_nuxt"]);
   });
+});
+
+describe("Bundling", () => {
+  try {
+    rmSync("test/data/bundling", {
+      recursive: true,
+    });
+  } catch {
+    // NOP
+  } finally {
+    mkdirSync("test/data/bundling");
+  }
+  const app = new App();
+  const stack = new Stack(app, "TestStack");
+  const asset = new NitroAsset(stack, "Bundling", {
+    path: "test/data/bundling",
+    bundling: {
+      image: DockerImage.fromRegistry("node:lts"),
+      local: {
+        tryBundle(outputDir) {
+          const nitroOutputDir = join(outputDir, ".output");
+          mkdirSync(nitroOutputDir);
+          writeFileSync(
+            join(nitroOutputDir, "nitro.json"),
+            JSON.stringify({
+              date: "2022-01-01T00:00:00.000Z",
+              preset: "aws-lambda-edge",
+              output: {
+                serverDir: "server",
+                publicDir: "public",
+              },
+            })
+          );
+          mkdirSync(join(nitroOutputDir, "server"));
+          writeFileSync(
+            join(nitroOutputDir, "server", "index.mjs"),
+            "console.log('test')"
+          );
+          mkdirSync(join(nitroOutputDir, "public"));
+          mkdirSync(join(nitroOutputDir, "public", "_nuxt"));
+          writeFileSync(
+            join(nitroOutputDir, "public", "favicon.ico"),
+            "<h1>Test</h1>"
+          );
+          return true;
+        },
+      },
+    },
+  });
+  it("Should detect server directory", () => {
+    const files = readdirSync(asset.serverHandler.path);
+    expect(files).toEqual(["index.mjs"]);
+  });
+  it("Should detect public directory", () => {
+    expect(asset.staticAsset.files).toEqual(["favicon.ico"]);
+    expect(asset.staticAsset.directories).toEqual(["_nuxt"]);
+  });
+  afterAll(() =>
+    rmSync("test/data/bundling", {
+      recursive: true,
+    })
+  );
 });
 
 describe("Server only", () => {

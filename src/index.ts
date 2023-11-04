@@ -1,7 +1,9 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
+import { Stage } from "aws-cdk-lib";
 import { BehaviorOptions } from "aws-cdk-lib/aws-cloudfront";
 import { AssetCode, Code } from "aws-cdk-lib/aws-lambda";
+import { Asset, AssetProps } from "aws-cdk-lib/aws-s3-assets";
 import {
   DeploymentSourceContext,
   ISource,
@@ -101,7 +103,7 @@ interface NitroJSON {
   };
 }
 
-export interface NitroAssetProps {
+export interface NitroAssetProps extends AssetProps {
   /**
    * Path to nitro project path.
    */
@@ -192,7 +194,17 @@ export class NitroAsset extends Construct {
 
   constructor(scope: Construct, id: string, props: NitroAssetProps) {
     super(scope, id);
-    const outputDir = resolve(props.path, props.outputDir ?? ".output");
+    const path = props.bundling
+      ? join(
+          Stage.of(this)?.assetOutdir!,
+          new Asset(this, "NitroProject", {
+            ...props,
+            exclude: [...(props.exclude ?? []), "cdk.out"],
+          }).assetPath
+        )
+      : props.path;
+
+    const outputDir = resolve(path, props.outputDir ?? ".output");
     const nitroJSON = JSON.parse(
       readFileSync(resolve(outputDir, "nitro.json")).toString()
     ) as NitroJSON;

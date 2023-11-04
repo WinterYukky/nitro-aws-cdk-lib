@@ -17,5 +17,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   jestOptions: {
     jestVersion: "^27.0.0",
   },
+  gitignore: ["test/data/server-only/.output/public", "test/data/bundling"],
 });
 project.synth();
