@@ -14,7 +14,7 @@ This Construct can resolve nitro output path.
 
 ```typescript
 const nitro = new NitroAsset(this, "NitroAsset", {
-  path: "../nuxt3" // your nitro project path
+  path: "../my-nitro-app" // your nitro project path
 })
 const edgeFunction = new cloudfront.experimental.EdgeFunction(
   this,
@@ -213,6 +213,17 @@ new s3deployment.BucketDeployment(this, "Deployment", {
 ## Structs <a name="Structs" id="Structs"></a>
 
 ### NitroAssetProps <a name="NitroAssetProps" id="nitro-aws-cdk-lib.NitroAssetProps"></a>
+
+NitroAssetProps.
+
+*Example*
+
+```typescript
+const nitro = new NitroAsset(this, "NitroAsset", {
+  path: "../my-nitro-app" // your nitro project path
+})
+```
+
 
 #### Initializer <a name="Initializer" id="nitro-aws-cdk-lib.NitroAssetProps.Initializer"></a>
 
