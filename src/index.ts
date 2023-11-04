@@ -1,9 +1,7 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
-import { join } from "path";
-import { Stage } from "aws-cdk-lib";
+import { join, resolve } from "path";
 import { BehaviorOptions } from "aws-cdk-lib/aws-cloudfront";
 import { AssetCode, Code } from "aws-cdk-lib/aws-lambda";
-import { Asset, AssetProps } from "aws-cdk-lib/aws-s3-assets";
 import {
   DeploymentSourceContext,
   ISource,
@@ -103,6 +101,19 @@ interface NitroJSON {
   };
 }
 
+export interface NitroAssetProps {
+  /**
+   * Path to nitro project path.
+   */
+  readonly path: string;
+  /**
+   * Path to output directory.
+   *
+   * @default ".output"
+   */
+  readonly outputDir?: string;
+}
+
 /**
  * Asset of nitro. This Construct can resolve nitro output path.
  * @example
@@ -158,7 +169,7 @@ export class NitroAsset extends Construct {
    *   this,
    *   "EdgeFunction",
    *   {
-   *     runtime: lambda.Runtime.NODEJS_16_X,
+   *     runtime: lambda.Runtime.NODEJS_18_X,
    *     handler: "index.handler",
    *     code: nitro.serverHandler,
    *   }
@@ -179,23 +190,18 @@ export class NitroAsset extends Construct {
    */
   readonly staticAsset: NitroStaticAsset;
 
-  constructor(scope: Construct, id: string, props: AssetProps) {
+  constructor(scope: Construct, id: string, props: NitroAssetProps) {
     super(scope, id);
-    const project = new Asset(this, "NitroProject", props);
-    const output = join(
-      Stage.of(this)?.assetOutdir ?? "",
-      project.assetPath,
-      ".output"
-    );
+    const outputDir = resolve(props.path, props.outputDir ?? ".output");
     const nitroJSON = JSON.parse(
-      readFileSync(join(output, "nitro.json")).toString()
+      readFileSync(resolve(outputDir, "nitro.json")).toString()
     ) as NitroJSON;
 
     this.serverHandler = Code.fromAsset(
-      join(output, nitroJSON.output.serverDir)
+      resolve(outputDir, nitroJSON.output.serverDir)
     );
     this.staticAsset = new NitroStaticAsset(
-      join(output, nitroJSON.output.publicDir)
+      resolve(outputDir, nitroJSON.output.publicDir)
     );
   }
 }

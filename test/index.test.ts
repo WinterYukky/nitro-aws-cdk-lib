@@ -1,4 +1,4 @@
-import { readdirSync, rmdirSync, mkdirSync } from "fs";
+import { readdirSync, mkdirSync, rmSync } from "fs";
 import { App, Stack } from "aws-cdk-lib";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { Bucket } from "aws-cdk-lib/aws-s3";
@@ -23,8 +23,11 @@ describe("Another directory", () => {
 
 describe("Server only", () => {
   try {
-    rmdirSync("test/data/server-only/.output/public");
+    rmSync("test/data/server-only/.output/public", {
+      recursive: true,
+    });
   } catch {
+    // NOP
   } finally {
     mkdirSync("test/data/server-only/.output/public");
   }
@@ -43,6 +46,11 @@ describe("Server only", () => {
     const files = readdirSync(asset.staticAsset.path);
     expect(files).toEqual(["dotfile"]);
   });
+  afterAll(() =>
+    rmSync("test/data/server-only/.output/public", {
+      recursive: true,
+    })
+  );
 });
 
 describe("NitroStaticAsset.resolveCloudFrontBehaviors", () => {

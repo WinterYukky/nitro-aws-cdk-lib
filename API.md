@@ -62,14 +62,14 @@ new CfnOutput(this, "URL", {
 ```typescript
 import { NitroAsset } from 'nitro-aws-cdk-lib'
 
-new NitroAsset(scope: Construct, id: string, props: AssetProps)
+new NitroAsset(scope: Construct, id: string, props: NitroAssetProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#nitro-aws-cdk-lib.NitroAsset.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
 | <code><a href="#nitro-aws-cdk-lib.NitroAsset.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#nitro-aws-cdk-lib.NitroAsset.Initializer.parameter.props">props</a></code> | <code>aws-cdk-lib.aws_s3_assets.AssetProps</code> | *No description.* |
+| <code><a href="#nitro-aws-cdk-lib.NitroAsset.Initializer.parameter.props">props</a></code> | <code><a href="#nitro-aws-cdk-lib.NitroAssetProps">NitroAssetProps</a></code> | *No description.* |
 
 ---
 
@@ -87,7 +87,7 @@ new NitroAsset(scope: Construct, id: string, props: AssetProps)
 
 ##### `props`<sup>Required</sup> <a name="props" id="nitro-aws-cdk-lib.NitroAsset.Initializer.parameter.props"></a>
 
-- *Type:* aws-cdk-lib.aws_s3_assets.AssetProps
+- *Type:* <a href="#nitro-aws-cdk-lib.NitroAssetProps">NitroAssetProps</a>
 
 ---
 
@@ -175,7 +175,7 @@ new cloudfront.experimental.EdgeFunction(
   this,
   "EdgeFunction",
   {
-    runtime: lambda.Runtime.NODEJS_16_X,
+    runtime: lambda.Runtime.NODEJS_18_X,
     handler: "index.handler",
     code: nitro.serverHandler,
   }
@@ -210,6 +210,51 @@ new s3deployment.BucketDeployment(this, "Deployment", {
 
 
 
+## Structs <a name="Structs" id="Structs"></a>
+
+### NitroAssetProps <a name="NitroAssetProps" id="nitro-aws-cdk-lib.NitroAssetProps"></a>
+
+#### Initializer <a name="Initializer" id="nitro-aws-cdk-lib.NitroAssetProps.Initializer"></a>
+
+```typescript
+import { NitroAssetProps } from 'nitro-aws-cdk-lib'
+
+const nitroAssetProps: NitroAssetProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.path">path</a></code> | <code>string</code> | Path to nitro project path. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.outputDir">outputDir</a></code> | <code>string</code> | Path to output directory. |
+
+---
+
+##### `path`<sup>Required</sup> <a name="path" id="nitro-aws-cdk-lib.NitroAssetProps.property.path"></a>
+
+```typescript
+public readonly path: string;
+```
+
+- *Type:* string
+
+Path to nitro project path.
+
+---
+
+##### `outputDir`<sup>Optional</sup> <a name="outputDir" id="nitro-aws-cdk-lib.NitroAssetProps.property.outputDir"></a>
+
+```typescript
+public readonly outputDir: string;
+```
+
+- *Type:* string
+- *Default:* ".output"
+
+Path to output directory.
+
+---
 
 ## Classes <a name="Classes" id="Classes"></a>
 
