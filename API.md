@@ -226,8 +226,154 @@ const nitroAssetProps: NitroAssetProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.path">path</a></code> | <code>string</code> | Path to nitro project path. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.assetHash">assetHash</a></code> | <code>string</code> | Specify a custom hash for this asset. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.assetHashType">assetHashType</a></code> | <code>aws-cdk-lib.AssetHashType</code> | Specifies the type of hash to calculate for this asset. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.bundling">bundling</a></code> | <code>aws-cdk-lib.BundlingOptions</code> | Bundle the asset by executing a command in a Docker container or a custom bundling provider. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.exclude">exclude</a></code> | <code>string[]</code> | File paths matching the patterns will be excluded. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.followSymlinks">followSymlinks</a></code> | <code>aws-cdk-lib.SymlinkFollowMode</code> | A strategy for how to handle symlinks. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.ignoreMode">ignoreMode</a></code> | <code>aws-cdk-lib.IgnoreMode</code> | The ignore behavior to use for `exclude` patterns. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.deployTime">deployTime</a></code> | <code>boolean</code> | Whether or not the asset needs to exist beyond deployment time; |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.readers">readers</a></code> | <code>aws-cdk-lib.aws_iam.IGrantable[]</code> | A list of principals that should be able to read this asset from S3. |
+| <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.path">path</a></code> | <code>string</code> | The disk location of the asset. |
 | <code><a href="#nitro-aws-cdk-lib.NitroAssetProps.property.outputDir">outputDir</a></code> | <code>string</code> | Path to output directory. |
+
+---
+
+##### `assetHash`<sup>Optional</sup> <a name="assetHash" id="nitro-aws-cdk-lib.NitroAssetProps.property.assetHash"></a>
+
+```typescript
+public readonly assetHash: string;
+```
+
+- *Type:* string
+- *Default:* based on `assetHashType`
+
+Specify a custom hash for this asset.
+
+If `assetHashType` is set it must
+be set to `AssetHashType.CUSTOM`. For consistency, this custom hash will
+be SHA256 hashed and encoded as hex. The resulting hash will be the asset
+hash.
+
+NOTE: the hash is used in order to identify a specific revision of the asset, and
+used for optimizing and caching deployment activities related to this asset such as
+packaging, uploading to Amazon S3, etc. If you chose to customize the hash, you will
+need to make sure it is updated every time the asset changes, or otherwise it is
+possible that some deployments will not be invalidated.
+
+---
+
+##### `assetHashType`<sup>Optional</sup> <a name="assetHashType" id="nitro-aws-cdk-lib.NitroAssetProps.property.assetHashType"></a>
+
+```typescript
+public readonly assetHashType: AssetHashType;
+```
+
+- *Type:* aws-cdk-lib.AssetHashType
+- *Default:* the default is `AssetHashType.SOURCE`, but if `assetHash` is explicitly specified this value defaults to `AssetHashType.CUSTOM`.
+
+Specifies the type of hash to calculate for this asset.
+
+If `assetHash` is configured, this option must be `undefined` or
+`AssetHashType.CUSTOM`.
+
+---
+
+##### `bundling`<sup>Optional</sup> <a name="bundling" id="nitro-aws-cdk-lib.NitroAssetProps.property.bundling"></a>
+
+```typescript
+public readonly bundling: BundlingOptions;
+```
+
+- *Type:* aws-cdk-lib.BundlingOptions
+- *Default:* uploaded as-is to S3 if the asset is a regular file or a .zip file, archived into a .zip file and uploaded to S3 otherwise
+
+Bundle the asset by executing a command in a Docker container or a custom bundling provider.
+
+The asset path will be mounted at `/asset-input`. The Docker
+container is responsible for putting content at `/asset-output`.
+The content at `/asset-output` will be zipped and used as the
+final asset.
+
+---
+
+##### `exclude`<sup>Optional</sup> <a name="exclude" id="nitro-aws-cdk-lib.NitroAssetProps.property.exclude"></a>
+
+```typescript
+public readonly exclude: string[];
+```
+
+- *Type:* string[]
+- *Default:* nothing is excluded
+
+File paths matching the patterns will be excluded.
+
+See `ignoreMode` to set the matching behavior.
+Has no effect on Assets bundled using the `bundling` property.
+
+---
+
+##### `followSymlinks`<sup>Optional</sup> <a name="followSymlinks" id="nitro-aws-cdk-lib.NitroAssetProps.property.followSymlinks"></a>
+
+```typescript
+public readonly followSymlinks: SymlinkFollowMode;
+```
+
+- *Type:* aws-cdk-lib.SymlinkFollowMode
+- *Default:* SymlinkFollowMode.NEVER
+
+A strategy for how to handle symlinks.
+
+---
+
+##### `ignoreMode`<sup>Optional</sup> <a name="ignoreMode" id="nitro-aws-cdk-lib.NitroAssetProps.property.ignoreMode"></a>
+
+```typescript
+public readonly ignoreMode: IgnoreMode;
+```
+
+- *Type:* aws-cdk-lib.IgnoreMode
+- *Default:* IgnoreMode.GLOB
+
+The ignore behavior to use for `exclude` patterns.
+
+---
+
+##### `deployTime`<sup>Optional</sup> <a name="deployTime" id="nitro-aws-cdk-lib.NitroAssetProps.property.deployTime"></a>
+
+```typescript
+public readonly deployTime: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether or not the asset needs to exist beyond deployment time;
+
+i.e.
+are copied over to a different location and not needed afterwards.
+Setting this property to true has an impact on the lifecycle of the asset,
+because we will assume that it is safe to delete after the CloudFormation
+deployment succeeds.
+
+For example, Lambda Function assets are copied over to Lambda during
+deployment. Therefore, it is not necessary to store the asset in S3, so
+we consider those deployTime assets.
+
+---
+
+##### `readers`<sup>Optional</sup> <a name="readers" id="nitro-aws-cdk-lib.NitroAssetProps.property.readers"></a>
+
+```typescript
+public readonly readers: IGrantable[];
+```
+
+- *Type:* aws-cdk-lib.aws_iam.IGrantable[]
+- *Default:* No principals that can read file asset.
+
+A list of principals that should be able to read this asset from S3.
+
+You can use `asset.grantRead(principal)` to grant read permissions later.
 
 ---
 
@@ -239,7 +385,11 @@ public readonly path: string;
 
 - *Type:* string
 
-Path to nitro project path.
+The disk location of the asset.
+
+The path should refer to one of the following:
+- A regular file or a .zip file, in which case the file will be uploaded as-is to S3.
+- A directory, in which case it will be archived into a .zip file and uploaded to S3.
 
 ---
 

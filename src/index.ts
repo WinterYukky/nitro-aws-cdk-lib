@@ -103,11 +103,15 @@ interface NitroJSON {
   };
 }
 
+/**
+ * NitroAssetProps
+ *
+ * @example
+ * const nitro = new NitroAsset(this, "NitroAsset", {
+ *   path: "../my-nitro-app" // your nitro project path
+ * })
+ */
 export interface NitroAssetProps extends AssetProps {
-  /**
-   * Path to nitro project path.
-   */
-  readonly path: string;
   /**
    * Path to output directory.
    *
@@ -120,7 +124,7 @@ export interface NitroAssetProps extends AssetProps {
  * Asset of nitro. This Construct can resolve nitro output path.
  * @example
  * const nitro = new NitroAsset(this, "NitroAsset", {
- *   path: "../nuxt3" // your nitro project path
+ *   path: "../my-nitro-app" // your nitro project path
  * })
  * const edgeFunction = new cloudfront.experimental.EdgeFunction(
  *   this,
